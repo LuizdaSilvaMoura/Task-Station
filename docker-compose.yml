@@ -14,8 +14,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - taskstation-network
 
-  # ── LocalStack (S3) ──
+  # ── LocalStack (S3) - Opcional ──
   localstack:
     image: localstack/localstack:3
     container_name: taskstation-localstack
@@ -26,6 +28,8 @@ services:
       DEFAULT_REGION: us-east-1
     volumes:
       - localstack_data:/var/lib/localstack
+    networks:
+      - taskstation-network
 
   # ── API (.NET 8) ──
   api:
@@ -37,17 +41,44 @@ services:
       - "5000:5000"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5000
       MongoDb__ConnectionString: mongodb://mongodb:27017
       MongoDb__DatabaseName: TaskStationDb
+      S3__Enabled: "false"
       S3__ServiceUrl: http://localstack:4566
       S3__BucketName: task-station-files
+      S3__Region: us-east-1
       S3__ForcePathStyle: "true"
     depends_on:
       mongodb:
         condition: service_healthy
-      localstack:
-        condition: service_started
+    networks:
+      - taskstation-network
+
+  # ── Frontend (React + Vite) ──
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.dev
+    container_name: taskstation-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://api:5000/api
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+    depends_on:
+      - api
+    networks:
+      - taskstation-network
 
 volumes:
   mongodb_data:
   localstack_data:
+
+networks:
+  taskstation-network:
+    driver: bridge
