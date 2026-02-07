@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  # ── MongoDB ──
+  mongodb:
+    image: mongo:7
+    container_name: taskstation-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── LocalStack (S3) ──
+  localstack:
+    image: localstack/localstack:3
+    container_name: taskstation-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+      DEFAULT_REGION: us-east-1
+    volumes:
+      - localstack_data:/var/lib/localstack
+
+  # ── API (.NET 8) ──
+  api:
+    build:
+      context: ./backend
+      dockerfile: src/TaskStation.API/Dockerfile
+    container_name: taskstation-api
+    ports:
+      - "5000:5000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      MongoDb__ConnectionString: mongodb://mongodb:27017
+      MongoDb__DatabaseName: TaskStationDb
+      S3__ServiceUrl: http://localstack:4566
+      S3__BucketName: task-station-files
+      S3__ForcePathStyle: "true"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+
+volumes:
+  mongodb_data:
+  localstack_data:
