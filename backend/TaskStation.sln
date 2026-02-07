@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -12,6 +11,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskStation.API", "src\TaskStation.API\TaskStation.API.csproj", "{A1B2C3D4-0004-0000-0000-000000000004}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E0000000-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskStation.Tests", "tests\TaskStation.Tests\TaskStation.Tests.csproj", "{59162ED7-F051-5175-5956-C777C8D4D122}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,11 +36,21 @@ Global
 		{A1B2C3D4-0004-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-0004-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-0004-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59162ED7-F051-5175-5956-C777C8D4D122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59162ED7-F051-5175-5956-C777C8D4D122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59162ED7-F051-5175-5956-C777C8D4D122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59162ED7-F051-5175-5956-C777C8D4D122}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1B2C3D4-0001-0000-0000-000000000001} = {E0000000-0000-0000-0000-000000000001}
 		{A1B2C3D4-0002-0000-0000-000000000002} = {E0000000-0000-0000-0000-000000000001}
 		{A1B2C3D4-0003-0000-0000-000000000003} = {E0000000-0000-0000-0000-000000000001}
 		{A1B2C3D4-0004-0000-0000-000000000004} = {E0000000-0000-0000-0000-000000000001}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E813F506-A4D0-4F53-937D-EB9E3D1E35D6}
 	EndGlobalSection
 EndGlobal
