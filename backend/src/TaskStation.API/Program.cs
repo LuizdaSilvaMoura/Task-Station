@@ -49,11 +49,17 @@ var app = builder.Build();
 // ── Middleware pipeline ──
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+// ── Swagger (always enabled for easy API testing) ──
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Station API v1"));
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Station API v1");
+    c.RoutePrefix = "swagger"; // Swagger available at /swagger
+});
+
+// ── Redirect root to Swagger ──
+app.MapGet("/", () => Results.Redirect("/swagger"))
+    .ExcludeFromDescription();
 
 app.UseCors("AllowFrontend");
 app.MapControllers();
