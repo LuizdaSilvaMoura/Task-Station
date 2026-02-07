@@ -2,6 +2,12 @@
 
 Sistema de gerenciamento de tarefas com controle de SLA (Service Level Agreement) e suporte a anexos de arquivos.
 
+## 🎥 Demonstração
+
+**[▶️ Assista à demonstração da aplicação em funcionamento](https://drive.google.com/file/d/1laViePmCm6vn55pKBwga7f2mbpIalJFF/view?usp=sharing)**
+
+---
+
 ## Sumário
 
 - [Visão Geral](#visão-geral)
