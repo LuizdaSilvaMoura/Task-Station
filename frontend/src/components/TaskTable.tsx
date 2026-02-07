@@ -7,6 +7,7 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -16,7 +17,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EditTaskModal } from "@/components/EditTaskModal";
-import { useUpdateTask } from "@/hooks/useTasks";
+import { ConfirmStatusModal } from "@/components/ConfirmStatusModal";
+import { useUpdateTask, useUpdateTaskStatus } from "@/hooks/useTasks";
 
 interface TaskTableProps {
   tasks: Task[];
@@ -45,7 +47,9 @@ function formatDate(isoDate: string) {
 
 export function TaskTable({ tasks }: TaskTableProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [confirmingTask, setConfirmingTask] = useState<Task | null>(null);
   const { mutate: updateTask, isPending } = useUpdateTask();
+  const { mutate: updateTaskStatus, isPending: isUpdatingStatus } = useUpdateTaskStatus();
 
   const handleEdit = (task: Task) => {
     setEditingTask(task);
@@ -66,6 +70,25 @@ export function TaskTable({ tasks }: TaskTableProps) {
           setEditingTask(null);
         },
       },
+    );
+  };
+
+  const handleCheckboxChange = (task: Task) => {
+    // Only allow marking as done for non-completed tasks
+    if (task.status === "DONE") return;
+    setConfirmingTask(task);
+  };
+
+  const handleConfirmStatusChange = () => {
+    if (!confirmingTask) return;
+
+    updateTaskStatus(
+      { id: confirmingTask.id, status: "DONE" },
+      {
+        onSuccess: () => {
+          setConfirmingTask(null);
+        },
+      }
     );
   };
 
@@ -128,10 +151,20 @@ export function TaskTable({ tasks }: TaskTableProps) {
         onUpdate={handleUpdate}
         isLoading={isPending}
       />
+      <ConfirmStatusModal
+        task={confirmingTask}
+        open={!!confirmingTask}
+        onClose={() => setConfirmingTask(null)}
+        onConfirm={handleConfirmStatusChange}
+        isLoading={isUpdatingStatus}
+      />
     <div className="mt-6 overflow-hidden rounded-xl border bg-card shadow-sm">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
+            <TableHead className="font-heading font-semibold w-12">
+              <span className="sr-only">Concluir</span>
+            </TableHead>
             <TableHead className="font-heading font-semibold">
               Título da Tarefa
             </TableHead>
@@ -163,6 +196,14 @@ export function TaskTable({ tasks }: TaskTableProps) {
                   isOverdue && "row-overdue",
                 )}
               >
+                <TableCell className="w-12">
+                  <Checkbox
+                    checked={task.status === "DONE"}
+                    onCheckedChange={() => handleCheckboxChange(task)}
+                    disabled={task.status === "DONE" || isUpdatingStatus}
+                    aria-label={`Marcar tarefa "${task.title}" como concluída`}
+                  />
+                </TableCell>
                 <TableCell className="font-medium">
                   {isOverdue && (
                     <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-destructive" />
