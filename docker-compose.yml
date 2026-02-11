@@ -64,12 +64,12 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_API_BASE_URL: http://api:5000/api
+      VITE_API_BASE_URL: http://localhost:5000/api
     volumes:
-      - ./src:/app/src
-      - ./public:/app/public
-      - ./index.html:/app/index.html
-      - ./vite.config.ts:/app/vite.config.ts
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
     depends_on:
       - api
     networks:
